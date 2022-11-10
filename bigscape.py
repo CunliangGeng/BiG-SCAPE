@@ -2082,12 +2082,21 @@ def CMD_parser():
                         sequences. Use if alignments have been generated in a \
                         previous run.")
     
-    parser.add_argument("--mibig", dest="mibig21", default=False, action="store_true",
+    parser.add_argument("--mibig", dest="mibig31", default=False, action="store_true",
                         help="Use included BGCs from then MIBiG database. Only \
                         relevant (i.e. those with distance < max(cutoffs) against\
-                        the input set) will be used. Currently uses version 2.1\
+                        the input set) will be used. Currently uses version 3.1\
                         of MIBiG. See https://mibig.secondarymetabolites.org/")
     
+    parser.add_argument("--mibig31", dest="mibig31", default=False, action="store_true",
+                        help="Include BGCs from version 3.1 of MIBiG")
+
+    parser.add_argument("--mibig30", dest="mibig30", default=False, action="store_true",
+                        help="Include BGCs from version 3.0 of MIBiG")
+
+    parser.add_argument("--mibig21", dest="mibig21", default=False, action="store_true",
+                        help="Include BGCs from version 2.1 of MIBiG")
+
     parser.add_argument("--mibig14", dest="mibig14", default=False, action="store_true",
                         help="Include BGCs from version 1.4 of MIBiG")
     
@@ -2230,6 +2239,8 @@ if __name__=="__main__":
     verbose = options.verbose
     
     selected_mibig = 0
+    if options.mibig31: selected_mibig += 1
+    if options.mibig30: selected_mibig += 1
     if options.mibig21: selected_mibig += 1
     if options.mibig14: selected_mibig += 1
     if options.mibig13: selected_mibig += 1
@@ -2360,11 +2371,15 @@ if __name__=="__main__":
     # (file, final folder, number of bgcs)
     mibig_set = set()
     if use_relevant_mibig:
-        if options.mibig21:
+        if options.mibig31:
+            mibig_zipfile_numbgcs = ("MIBiG_3.1_final.zip", "MIBiG_3.1_final", 2502)
+        elif options.mibig30:
+            mibig_zipfile_numbgcs = ("MIBiG_3.0_final.zip", "MIBiG_3.0_final", 2516)
+        elif options.mibig21:
             mibig_zipfile_numbgcs = ("MIBiG_2.1_final.zip", "MIBiG_2.1_final", 1923)
         elif options.mibig14:
             mibig_zipfile_numbgcs = ("MIBiG_1.4_final.zip", "MIBiG_1.4_final", 1808)
-        else:
+        else: # options.mibig13
             mibig_zipfile_numbgcs = ("MIBiG_1.3_final.zip", "MIBiG_1.3_final", 1393)
         
         print("\n Trying to read bundled MIBiG BGCs as reference")
